@@ -3,13 +3,13 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
-subtitle: ''
-description: ''
-keywords:
-author: John Doe
+title: Zat's Blog
+subtitle: 'Zat 的自留地'
+description: 'Have fun！'
+keywords: Code,Life,Animation
+author: Zhou Fang
 language: en
-timezone: ''
+timezone: 'Asian/Bei Jing'
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
