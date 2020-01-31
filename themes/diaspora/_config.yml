@@ -1,8 +1,8 @@
 # 头部菜单，title: link
 menu:
   Whoami: /whoami
-  Github: https://github.com/Fechin
-  Twitter: https://twitter.com/FechinLi
+  Github: https://github.com/walkerzf
+ # Twitter: https://twitter.com/FechinLi
 
 # 是否显示目录
 TOC: false
@@ -54,5 +54,3 @@ favicon: /img/favicon.png
 
 # rss文件
 rss: atom.xml
-
-theme: diaspora

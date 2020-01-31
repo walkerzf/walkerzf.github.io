@@ -37,7 +37,6 @@ cd themes/diaspora
 git pull
 ```
 
-
 ### 新建文章模板
 
 ``` markdown
@@ -56,6 +55,7 @@ cover: http://domain.com/awesome.jpg
 ```
 
 ### 创建分类页
+
 1 新建一个页面，命名为 categories 。命令如下：
 ```
 hexo new page categories
