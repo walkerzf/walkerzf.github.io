@@ -81,17 +81,17 @@ search:
   insight: true # you need to install `hexo-generator-json-content` before using Insight Search
   baidu: false # you need to disable other search engines to use Baidu search
 
-# Donate
-# donate:
-#   enable: true
-#   # 微信打赏
-#   wechatpay:
-#     qrcode: images/donate/wechatpayimg.png
-#     title: 微信支付
-#   # 支付宝打赏
-#   alipay: 
-#     qrcode: images/donate/alipayimg.png 
-#     title: 支付宝
+Donate
+donate:
+  enable: true
+  # 微信打赏
+  wechatpay:
+    qrcode: images/donate/wechatpayimg.png
+    title: 微信支付
+  # 支付宝打赏
+  alipay: 
+    qrcode: images/donate/alipayimg.png 
+    title: 支付宝
 
 # Share
 # weibo,qq,qzone,wechat,tencent,douban,diandian,facebook,twitter,google,linkedin
@@ -153,14 +153,14 @@ douban:
   start: 0 # 从哪一条记录开始
   count: 100 # 获取豆瓣书单数据条数
   
-# PV
-pv:
-  busuanzi:
-    enable: true  # 不蒜子统计
-  leancloud:
-    enable: false  # leancloud统计
-    app_id: # leancloud <AppID>
-    app_key: # leancloud <AppKey>
+# # PV
+# pv:
+#   busuanzi:
+#     enable: true  # 不蒜子统计
+#   leancloud:
+#     enable: false  # leancloud统计
+#     app_id: # leancloud <AppID>
+#     app_key: # leancloud <AppKey>
         
 # wordcount
 postCount:
@@ -168,22 +168,22 @@ postCount:
   wordcount: true  # 文章字数统计
   min2read: true  # 阅读时长预计 
 
-# Plugins
-plugins:
-  google_analytics: # enter the tracking ID for your Google Analytics
-  google_site_verification: # enter Google site verification code
-  baidu_analytics: # enter Baidu Analytics hash key
-  tencent_analytics: 
+# # Plugins
+# plugins:
+#   google_analytics: # enter the tracking ID for your Google Analytics
+#   google_site_verification: # enter Google site verification code
+#   baidu_analytics: # enter Baidu Analytics hash key
+#   tencent_analytics: 
   
-# Miscellaneous
-twitter:
-google_plus:
-fb_admins:
-fb_app_id:  
+# # Miscellaneous
+# twitter:
+# google_plus:
+# fb_admins:
+# fb_app_id:  
   
 # profile
 profile:
-  enabled: true # Whether to show profile bar
+  enabled: false # Whether to show profile bar
   avatar: images/Halu.png
   gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
   author: Zhou Fang
