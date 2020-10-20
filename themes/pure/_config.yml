@@ -183,7 +183,7 @@ fb_app_id:
   
 # profile
 profile:
-  enabled: false # Whether to show profile bar
+  enabled: true # Whether to show profile bar
   avatar: images/Halu.png
   gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
   author: Zhou Fang
