@@ -6,7 +6,7 @@ menu:
   Tags: tags  # 标签
   Repository: repository  # github repositories
   Books: books  # 豆瓣书单
-  Links: links  # 友链
+  # Links: links  # 友链
   About: about  # 关于
 
 # Enable/Disable menu icons
@@ -18,7 +18,7 @@ menu_icons:
   tags: icon-tags
   repository: icon-project
   books: icon-book-fill
-  links: icon-friendship
+  # links: icon-friendship
   about: icon-cup-fill
 
 # rss
@@ -184,7 +184,7 @@ fb_app_id:
 # profile
 profile:
   enabled: true # Whether to show profile bar
-  avatar: images/Halu.JPG
+  avatar: images/Halu.png
   gravatar: # Gravatar email address, if you enable Gravatar, your avatar config will be overriden
   author: Zhou Fang
   author_title: Learner .Want to be a thinker.
