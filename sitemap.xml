@@ -73,6 +73,20 @@
   </url>
 
   
+  <url>
+    <loc>https://walkerzf.github.io/tags/intro/</loc>
+    <lastmod>2020-10-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
 
+  
+  <url>
+    <loc>https://walkerzf.github.io/categories/intro/</loc>
+    <lastmod>2020-10-20</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
   
 </urlset>
