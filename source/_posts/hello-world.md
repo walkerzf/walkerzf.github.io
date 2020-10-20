@@ -1,5 +1,10 @@
 ---
-title: "Zat’s Blog"
+title: Introduction
+categories:
+  - intro
+tags:
+  - intro
+toc: true # 是否启用内容索引
 ---
 Welcome to Zat’s Blog.My name is Zhou Fang.
 
