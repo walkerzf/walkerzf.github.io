@@ -83,7 +83,7 @@ search:
 
 # Donate
 donate:
-  enable: true
+  enable: false
   # 微信打赏
   wechatpay:
     qrcode: images/donate/wechatpayimg.png
@@ -108,7 +108,7 @@ github:
 # Gitment
 # Introduction: https://imsun.net/posts/gitment-introduction/
 comment:
-  type: valine  # 启用哪种评论系统
+  type:   # 启用哪种评论系统
   disqus:  # enter disqus shortname here
   youyan: 
     uid: 1783844 # enter youyan uid 
