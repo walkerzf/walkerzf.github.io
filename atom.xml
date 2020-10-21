@@ -6,7 +6,7 @@
   <link href="https://walkerzf.github.io/atom.xml" rel="self"/>
   
   <link href="https://walkerzf.github.io/"/>
-  <updated>2020-10-20T14:17:49.748Z</updated>
+  <updated>2020-10-21T11:42:10.656Z</updated>
   <id>https://walkerzf.github.io/</id>
   
   <author>
@@ -17,36 +17,35 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Introduction</title>
-    <link href="https://walkerzf.github.io/2020/10/20/hello-world/"/>
-    <id>https://walkerzf.github.io/2020/10/20/hello-world/</id>
-    <published>2020-10-20T14:17:49.748Z</published>
-    <updated>2020-10-20T14:17:49.748Z</updated>
+    <title>6.S081 Pgtbl Lab</title>
+    <link href="https://walkerzf.github.io/2020/10/21/PgtblLab/"/>
+    <id>https://walkerzf.github.io/2020/10/21/PgtblLab/</id>
+    <published>2020-10-21T11:42:10.656Z</published>
+    <updated>2020-10-21T11:42:10.656Z</updated>
     
-    <content type="html"><![CDATA[<p>Welcome to Zat’s Blog.My name is Zhou Fang.</p><h2 id="Education"><a href="#Education" class="headerlink" title="Education"></a>Education</h2><ul><li>2015/9~2019/6    |    BeiHang University    |    Electrical Engineering    |    Bachelor</li><li>2019/9~                |     ZheJiang University    |   Electrical Engineering     |   Master</li></ul><h2 id="Experience"><a href="#Experience" class="headerlink" title="Experience"></a>Experience</h2><h2 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h2><ul><li>[Github][<a href="https://github.com/walkerzf]">https://github.com/walkerzf]</a></li></ul>]]></content>
+    <content type="html"><![CDATA[<h1 id="Pgtbl-Lab"><a href="#Pgtbl-Lab" class="headerlink" title="Pgtbl Lab"></a>Pgtbl Lab</h1>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;Welcome to Zat’s Blog.My name is Zhou Fang.&lt;/p&gt;
-&lt;h2 id=&quot;Education&quot;&gt;&lt;a href=&quot;#Education&quot; class=&quot;headerlink&quot; title=&quot;Education&quot;&gt;&lt;/a&gt;Educatio</summary>
+    <summary type="html">&lt;h1 id=&quot;Pgtbl-Lab&quot;&gt;&lt;a href=&quot;#Pgtbl-Lab&quot; class=&quot;headerlink&quot; title=&quot;Pgtbl Lab&quot;&gt;&lt;/a&gt;Pgtbl Lab&lt;/h1&gt;</summary>
       
     
     
     
-    <category term="intro" scheme="https://walkerzf.github.io/categories/intro/"/>
+    <category term="6.S081" scheme="https://walkerzf.github.io/categories/6-S081/"/>
     
     
-    <category term="intro" scheme="https://walkerzf.github.io/tags/intro/"/>
+    <category term="Lab" scheme="https://walkerzf.github.io/tags/Lab/"/>
     
   </entry>
   
   <entry>
-    <title>hhh</title>
-    <link href="https://walkerzf.github.io/2020/10/20/newworld/"/>
-    <id>https://walkerzf.github.io/2020/10/20/newworld/</id>
-    <published>2020-10-20T14:17:49.748Z</published>
-    <updated>2020-10-20T14:17:49.748Z</updated>
+    <title>Introduction</title>
+    <link href="https://walkerzf.github.io/2020/10/21/hello-world/"/>
+    <id>https://walkerzf.github.io/2020/10/21/hello-world/</id>
+    <published>2020-10-21T11:42:10.656Z</published>
+    <updated>2020-10-21T11:42:10.656Z</updated>
     
     <content type="html"><![CDATA[<p>Welcome to Zat’s Blog.My name is Zhou Fang.</p><h2 id="Education"><a href="#Education" class="headerlink" title="Education"></a>Education</h2><ul><li>2015/9~2019/6    |    BeiHang University    |    Electrical Engineering    |    Bachelor</li><li>2019/9~                |     ZheJiang University    |   Electrical Engineering     |   Master</li></ul><h2 id="Experience"><a href="#Experience" class="headerlink" title="Experience"></a>Experience</h2><h2 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h2><ul><li>[Github][<a href="https://github.com/walkerzf]">https://github.com/walkerzf]</a></li></ul>]]></content>
     
