@@ -68,3 +68,22 @@ void vmprint(pagetable_t pagetable){
 }
 ```
 
+  We can get the output like this. In the top-level page table ,we have two entry. The first entry corresponding 1GB address. In the bottom page table ,we have three entries  ,corresponding the `text and data` ,`guard page` and `stack`. We have two interesting points.
+
+* The reason about the `text and data` are mapped together not respectively only for simplicity.
+* The `trampoline`  and `tramframe` are mapped highest in va , but in page table ,they are in entry `255`,not in `511`,because  although the `riscv`  uses 39-bits,it actually uses 38 bits ( because  if we use the 39th bit ,the 40th 41th 42th ..etc should be set **All for simplicity!**) , so in the top-level page table ,we only have 8 bits, the highest bit is `255`.
+
+> ```
+> page table 0x0000000087f6e000
+> ..0: pte 0x0000000021fda801 pa 0x0000000087f6a000
+> .. ..0: pte 0x0000000021fda401 pa 0x0000000087f69000
+> .. .. ..0: pte 0x0000000021fdac1f pa 0x0000000087f6b000
+> .. .. ..1: pte 0x0000000021fda00f pa 0x0000000087f68000
+> .. .. ..2: pte 0x0000000021fd9c1f pa 0x0000000087f67000
+> ..255: pte 0x0000000021fdb401 pa 0x0000000087f6d000
+> .. ..511: pte 0x0000000021fdb001 pa 0x0000000087f6c000
+> .. .. ..510: pte 0x0000000021fdd807 pa 0x0000000087f76000
+> .. .. ..511: pte 0x0000000020001c0b pa 0x0000000080007000
+> ```
+
+  
