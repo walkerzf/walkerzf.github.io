@@ -6,7 +6,7 @@
   <link href="https://walkerzf.github.io/atom.xml" rel="self"/>
   
   <link href="https://walkerzf.github.io/"/>
-  <updated>2020-10-21T11:42:10.656Z</updated>
+  <updated>2020-10-21T12:08:25.560Z</updated>
   <id>https://walkerzf.github.io/</id>
   
   <author>
@@ -20,15 +20,15 @@
     <title>6.S081 Pgtbl Lab</title>
     <link href="https://walkerzf.github.io/2020/10/21/PgtblLab/"/>
     <id>https://walkerzf.github.io/2020/10/21/PgtblLab/</id>
-    <published>2020-10-21T11:42:10.656Z</published>
-    <updated>2020-10-21T11:42:10.656Z</updated>
+    <published>2020-10-21T12:08:25.560Z</published>
+    <updated>2020-10-21T12:08:25.560Z</updated>
     
-    <content type="html"><![CDATA[<h1 id="Pgtbl-Lab"><a href="#Pgtbl-Lab" class="headerlink" title="Pgtbl Lab"></a>Pgtbl Lab</h1>]]></content>
+    <content type="html"><![CDATA[<h1 id="Pgtbl-Lab"><a href="#Pgtbl-Lab" class="headerlink" title="Pgtbl Lab"></a>Pgtbl Lab</h1><p>In this lab , we will explore the user page tables and kernel page table ,and modify or create a process’s kernel page table to help simplify the functions that copy data from user space into the kernel space.</p><p>The lab have three parts. Part 1  is simpler relatively,we need to print the <strong>valid</strong> <code>pte</code> in three-level page table. Part 2 and 3 can be seen as one part .In part 2 ,we need to copy a process’s page table which is identical to kernel page table ,and in part 3 ,we need to add user mapping to the process’s kernel page table .</p><h2 id="Part-1-print-a-page-table"><a href="#Part-1-print-a-page-table" class="headerlink" title="Part 1 print a page table"></a>Part 1 print a page table</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Recursively free page-table pages.</span></span><br><span class="line"><span class="comment">// All leaf mappings must already have been removed.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freewalk</span><span class="params">(<span class="keyword">pagetable_t</span> pagetable)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// there are 2^9 = 512 PTEs in a page table.</span></span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">512</span>; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">pte_t</span> pte = pagetable[i];</span><br><span class="line">    <span class="keyword">if</span> ((pte &amp; PTE_V) &amp;&amp; (pte &amp; (PTE_R | PTE_W | PTE_X)) == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">// this PTE points to a lower-level page table.</span></span><br><span class="line">      uint64 child = PTE2PA(pte);</span><br><span class="line">      freewalk((<span class="keyword">pagetable_t</span>)child);</span><br><span class="line">      pagetable[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (pte &amp; PTE_V)</span><br><span class="line">    &#123;</span><br><span class="line">      panic(<span class="string">"freewalk: leaf"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  kfree((<span class="keyword">void</span> *)pagetable);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
     
     
       
       
-    <summary type="html">&lt;h1 id=&quot;Pgtbl-Lab&quot;&gt;&lt;a href=&quot;#Pgtbl-Lab&quot; class=&quot;headerlink&quot; title=&quot;Pgtbl Lab&quot;&gt;&lt;/a&gt;Pgtbl Lab&lt;/h1&gt;</summary>
+    <summary type="html">&lt;h1 id=&quot;Pgtbl-Lab&quot;&gt;&lt;a href=&quot;#Pgtbl-Lab&quot; class=&quot;headerlink&quot; title=&quot;Pgtbl Lab&quot;&gt;&lt;/a&gt;Pgtbl Lab&lt;/h1&gt;&lt;p&gt;In this lab , we will explore the user pag</summary>
       
     
     
@@ -44,8 +44,8 @@
     <title>Introduction</title>
     <link href="https://walkerzf.github.io/2020/10/21/hello-world/"/>
     <id>https://walkerzf.github.io/2020/10/21/hello-world/</id>
-    <published>2020-10-21T11:42:10.656Z</published>
-    <updated>2020-10-21T11:42:10.656Z</updated>
+    <published>2020-10-21T12:08:25.560Z</published>
+    <updated>2020-10-21T12:08:25.560Z</updated>
     
     <content type="html"><![CDATA[<p>Welcome to Zat’s Blog.My name is Zhou Fang.</p><h2 id="Education"><a href="#Education" class="headerlink" title="Education"></a>Education</h2><ul><li>2015/9~2019/6    |    BeiHang University    |    Electrical Engineering    |    Bachelor</li><li>2019/9~                |     ZheJiang University    |   Electrical Engineering     |   Master</li></ul><h2 id="Experience"><a href="#Experience" class="headerlink" title="Experience"></a>Experience</h2><h2 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h2><ul><li>[Github][<a href="https://github.com/walkerzf]">https://github.com/walkerzf]</a></li></ul>]]></content>
     
