@@ -1,5 +1,5 @@
 ---
-title: "6.S081 Pgtbl Lab"
+ctitle: "6.S081 Pgtbl Lab"
 categories:
   - 6.S081
 tags:
@@ -12,7 +12,7 @@ toc: true # 是否启用内容索引
 
   The lab have three parts. Part 1  is simpler relatively,we need to print the **valid** `pte` in three-level page table. Part 2 and 3 can be seen as one part .In part 2 ,we need to copy a process’s page table which is identical to kernel page table ,and in part 3 ,we need to add user mapping to the process’s kernel page table .
 
-## Part 1 print a page table
+# Part 1 print a page table
 
   In this part ,we need to print the first process ‘ page table ,so we can see the figure 1 ,which is the use address space .The user address space have several parts : `text`,`data` ,`guard page` , `stack`,`trampoline` and `trapframe` .
 
@@ -88,7 +88,7 @@ void vmprint(pagetable_t pagetable){
 
 We actually can print the `PTE_FLAG` for each valid pte.
 
-## Part 2  A kernel page table per process 
+# Part 2  A kernel page table per process
 
   The lab is vert time-consuming ,because we are doing kernel programming  which is difficult to track the bug  and easy to make error. The points we should pay attention to :
 
@@ -102,26 +102,146 @@ In part 3 , we will add user mapping in process's kernel page table  to allow th
          So the entry 1-511 we can share the same page table with the kernel page table . The entry zero should be unique in process's kernel page table. This is called `share` solution. 
         We could have the naive  `copy` solution , when we switch in  process , we copy the ,when we switch out ,we free up the page table .
 
-### The `init` of process kernel page table
+## The `init` of process kernel page table
 
 ```c
 //share the 1-511 entry and map the entry zero  for process 's kernel page table init
+// helper function 
+void kvmmapkern(pagetable_t pagetable, uint64 va, uint64 pa, uint64 sz, int perm)
+{
+  if (mappages(pagetable, va, sz, pa, perm) != 0)
+    panic("kvmmap");
+}
 
+// according to the Q&A Lecture 7
+pagetable_t kvmcreate()
+{
+  pagetable_t p = uvmcreate();
+  int i;
+  // we share the 1-511 entry
+  for (i = 1; i < 512; i++)
+  {
+    p[i] = kernel_pagetable[i];
+  }
+  //we map the entry 0 and indentical to the kernel page table, add explicitly
+  //we need a helper function because in kvminit function we do not
+  //have an argument pagetable
+
+  kvmmapkern(p, UART0, UART0, PGSIZE, PTE_R | PTE_W);
+  kvmmapkern(p, VIRTIO0, VIRTIO0, PGSIZE, PTE_R | PTE_W);
+  kvmmapkern(p, CLINT, CLINT, 0x10000, PTE_R | PTE_W);
+  kvmmapkern(p, PLIC, PLIC, 0x400000, PTE_R | PTE_W);
+  return p;
+}
 ```
 
-
-
-### The clean of process kernel page table
+## The clean of process kernel page table
 
 When we free the  process’s kernel page table ,because entry 1-511 we share the same thing with the kernel page table ,so we do not need to free that memory . So we do free the lower level page table corresponding the entry zero. We can get `medium level` page table through the `pagetable[0]` ,  and free any valid pte  and corresponding `bottom level` page table .
 
-```
+```c
+
+//according to the Q&A Lecture 7
+//a specialize kvmfree to match kvmcreate
+//because we share the 1-511 ,only entry to consider is entry 0
+//thus ,we only have one mid-level pagetable and possibly 512 bottom-level
+//we never have free the PA which is pointed by the bottom-level pte
+//because non were allocated by kvmcreate
+void kvmfree(pagetable_t pagetable, uint64 sz)
+{
+  pte_t pte = pagetable[0];
+  pagetable_t level1 = (pagetable_t)PTE2PA(pte);
+  for (int i = 0; i < 512; i++)
+  {
+    pte_t p = level1[i];
+    if (p & PTE_V)
+    {
+      uint64 level2 = PTE2PA(p);
+      kfree((void *) level2);
+      level1[i] =0;
+    }
+  }
+  kfree((void *)level1);
+  kfree((void *)pagetable);
+}
 
 ```
 
+According to the hints in part 2 ,we need to fix the  `scheduler()` to load the process’s kernel page table when process is running ,when the no process is running ,the  `scheduler()` will use the kernel page table.
+
+```c
+{
+        // Switch to chosen process.  It is the process's job
+        // to release its lock and then reacquire it
+        // before jumping back to us.
+        p->state = RUNNING;
+        c->proc = p;
+        w_satp(MAKE_SATP(p->kernelpgtbl));
+        sfence_vma();
+        swtch(&c->context, &p->context);
+
+        // Process is done running for now.
+        // It should have changed its p->state before coming back.
+        c->proc = 0;
+        w_satp(MAKE_SATP(kernel_pagetable));
+        sfence_vma();
+        found = 1;
+      }
+```
+
+# Part 3 Add user mapping
+
+Task: Simplify `copyin/copyinstr`
+
+Now for per process ,we have two page  table: one is user page table and another is a copy for kernel page table . We want to help the  simply `copyin` , when the kernel do not have user mapping ,the kernel needs to translate the `va => pa`  in software .Your task is to add user mapping to the process’s kernel page table so that the kernel can dereference the user pointers directly.
+
+**Advantages:**
+
+* Performance. When we need to move big bytes which can go out of `PGSIZE` , we need to `walkaddr` the `va` ,and move the `pa` .But when we have the correct user mapping ,we can using the page table.
+* We can manipulate the user data freely .Eg . when we need to fix a file in a data structure ,we may need copy in and copy out, but we do not need , we can 
 
 
 
+```c
+//according to Q&A lecture 7
+//copy ptes from the user pgtbl to process kernel pgtbl
+void kvmmapuser(int pid, pagetable_t kpagetable, pagetable_t upagetable, uint64 newsz, uint64 oldsz)
+{
+  uint64 va;
+  pte_t *upte;
+  pte_t *kpte;
+  if (newsz > PLIC)
+    panic("kvmmapuser:newsz too large");
+  for (va = oldsz; va < newsz; va += PGSIZE)
+  {
+    upte = walk(upagetable, va, 0);
+    //debug
+    if (upte == 0)
+    {
+      printf("kvmmapuser :0x%x 0x%x\n", va, newsz);
+      panic("kvmmapuser:not upte");
+    }
+    if ((*upte & PTE_V) == 0)
+    {
+      printf("kvmmapuser : no valid pte 0x%x 0x%x\n", va, newsz);
+      panic("kvmmapuser:not valid upte");
+    }
+    kpte = walk(kpagetable, va, 1);
+    if (kpte == 0)
+      panic("kvmmapuser:no kpte");
+    *kpte = *upte;
+    *kpte &= ~(PTE_U | PTE_W | PTE_X);
+  }
+  // if newsz < oldsz clear ptes , not necessary
+  //check p->sz will not use thess ptes
+  for (va = newsz; va < oldsz; va += PGSIZE){
+    kpte = walk(kpagetable, va, 1);
+    *kpte &= ~PTE_V;
+  }
+}
+```
+
+When we add the `kvmmapuser ` in `fork` , the third argument should be new process’s page table , because  when we fork many times, the old process may exit ,the old process ‘s page table may be cleaned up.
 
 
 
