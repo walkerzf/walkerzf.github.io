@@ -17,16 +17,16 @@
   <meta http-equiv="window-target" content="_top" />
   
   
-  <title>PgtblLab | Zat &#39;s Blog</title>
+  <title>6.S081 Pgtbl Lab | Zat &#39;s Blog</title>
   <meta name="description" content="Pgtbl Lab  In this lab , we will explore the user page tables and kernel page table ,and modify or create a process‘s kernel page table to help simplify the functions that copy data from user space in">
 <meta property="og:type" content="article">
-<meta property="og:title" content="PgtblLab">
+<meta property="og:title" content="6.S081 Pgtbl Lab">
 <meta property="og:url" content="https://walkerzf.github.io/2020/10/22/PgtblLab/index.html">
 <meta property="og:site_name" content="Zat&#39;s Blog">
 <meta property="og:description" content="Pgtbl Lab  In this lab , we will explore the user page tables and kernel page table ,and modify or create a process‘s kernel page table to help simplify the functions that copy data from user space in">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-10-22T15:06:54.336Z">
-<meta property="article:modified_time" content="2020-10-22T15:06:54.336Z">
+<meta property="article:published_time" content="2020-10-22T15:13:14.000Z">
+<meta property="article:modified_time" content="2020-10-22T15:15:45.944Z">
 <meta property="article:author" content="Zhou Fang">
 <meta property="article:tag" content="Lab">
 <meta name="twitter:card" content="summary">
@@ -255,13 +255,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/intro/">intro</a>
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
               </p>
               <p class="item-title">
-                <a href="/2020/10/22/hello-world/" class="title">Introduction</a>
+                <a href="/2020/10/22/PgtblLab/" class="title">6.S081 Pgtbl Lab</a>
               </p>
               <p class="item-date">
-                <time datetime="2020-10-22T15:06:54.336Z" itemprop="datePublished">2020-10-22</time>
+                <time datetime="2020-10-22T15:13:14.000Z" itemprop="datePublished">2020-10-22</time>
               </p>
             </div>
           </li>
@@ -270,13 +270,13 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+                <a class="category-link" href="/categories/intro/">intro</a>
               </p>
               <p class="item-title">
-                <a href="/2020/10/22/PgtblLab/" class="title">PgtblLab</a>
+                <a href="/2020/10/15/hello-world/" class="title">Introduction</a>
               </p>
               <p class="item-date">
-                <time datetime="2020-10-22T15:06:54.336Z" itemprop="datePublished">2020-10-22</time>
+                <time datetime="2020-10-15T12:14:25.000Z" itemprop="datePublished">2020-10-15</time>
               </p>
             </div>
           </li>
@@ -310,7 +310,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      PgtblLab
+      6.S081 Pgtbl Lab
     </h1>
   
 
@@ -319,7 +319,7 @@
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
 	<a href="/2020/10/22/PgtblLab/" class="article-date">
-	  <time datetime="2020-10-22T15:06:54.336Z" itemprop="datePublished">2020-10-22</time>
+	  <time datetime="2020-10-22T15:13:14.000Z" itemprop="datePublished">2020-10-22</time>
 	</a>
 </span>
         
@@ -381,7 +381,7 @@
 <p><strong>Advantages:</strong></p>
 <ul>
 <li>Performance. When we need to move big bytes which can go out of <code>PGSIZE</code> , we need to <code>walkaddr</code> the <code>va</code> ,and move the <code>pa</code> .But when we have the correct user mapping ,we can using the page table.</li>
-<li>We can manipulate the user data freely .Eg . when we need to fix a file in a data structure ,we may need copy in and copy out, but we do not need , we can </li>
+<li>We can manipulate the user data freely .Eg . when we need to fix a file in a data structure ,we may need copy in and copy out</li>
 </ul>
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//according to Q&amp;A lecture 7</span></span><br><span class="line"><span class="comment">//copy ptes from the user pgtbl to process kernel pgtbl</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">kvmmapuser</span><span class="params">(<span class="keyword">int</span> pid, <span class="keyword">pagetable_t</span> kpagetable, <span class="keyword">pagetable_t</span> upagetable, uint64 newsz, uint64 oldsz)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 va;</span><br><span class="line">  <span class="keyword">pte_t</span> *upte;</span><br><span class="line">  <span class="keyword">pte_t</span> *kpte;</span><br><span class="line">  <span class="keyword">if</span> (newsz &gt; PLIC)</span><br><span class="line">    panic(<span class="string">"kvmmapuser:newsz too large"</span>);</span><br><span class="line">  <span class="keyword">for</span> (va = oldsz; va &lt; newsz; va += PGSIZE)</span><br><span class="line">  &#123;</span><br><span class="line">    upte = walk(upagetable, va, <span class="number">0</span>);</span><br><span class="line">    <span class="comment">//debug</span></span><br><span class="line">    <span class="keyword">if</span> (upte == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"kvmmapuser :0x%x 0x%x\n"</span>, va, newsz);</span><br><span class="line">      panic(<span class="string">"kvmmapuser:not upte"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> ((*upte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="built_in">printf</span>(<span class="string">"kvmmapuser : no valid pte 0x%x 0x%x\n"</span>, va, newsz);</span><br><span class="line">      panic(<span class="string">"kvmmapuser:not valid upte"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    kpte = walk(kpagetable, va, <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">if</span> (kpte == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">"kvmmapuser:no kpte"</span>);</span><br><span class="line">    *kpte = *upte;</span><br><span class="line">    *kpte &amp;= ~(PTE_U | PTE_W | PTE_X);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// if newsz &lt; oldsz clear ptes , not necessary</span></span><br><span class="line">  <span class="comment">//check p-&gt;sz will not use thess ptes</span></span><br><span class="line">  <span class="keyword">for</span> (va = newsz; va &lt; oldsz; va += PGSIZE)&#123;</span><br><span class="line">    kpte = walk(kpagetable, va, <span class="number">1</span>);</span><br><span class="line">    *kpte &amp;= ~PTE_V;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -396,7 +396,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="https://walkerzf.github.io/2020/10/22/PgtblLab/" title="PgtblLab" target="_blank" rel="external">https://walkerzf.github.io/2020/10/22/PgtblLab/</a>
+      <a href="https://walkerzf.github.io/2020/10/22/PgtblLab/" title="6.S081 Pgtbl Lab" target="_blank" rel="external">https://walkerzf.github.io/2020/10/22/PgtblLab/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -440,10 +440,10 @@
   
   <ul class="pager pull-left">
     
-    <li class="prev">
-      <a href="/2020/10/22/hello-world/" title="Introduction"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
-    </li>
     
+    <li class="next">
+      <a href="/2020/10/15/hello-world/" title="Introduction"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
     
     
     <li class="toggle-toc">
