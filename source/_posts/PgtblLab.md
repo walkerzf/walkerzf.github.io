@@ -1,5 +1,6 @@
 ---
-ctitle: "6.S081 Pgtbl Lab"
+title: "6.S081 Pgtbl Lab"
+date: 2020-10-22 23:13:14
 categories:
   - 6.S081
 tags:
@@ -198,7 +199,7 @@ Now for per process ,we have two page  table: one is user page table and another
 **Advantages:**
 
 * Performance. When we need to move big bytes which can go out of `PGSIZE` , we need to `walkaddr` the `va` ,and move the `pa` .But when we have the correct user mapping ,we can using the page table.
-* We can manipulate the user data freely .Eg . when we need to fix a file in a data structure ,we may need copy in and copy out, but we do not need , we can 
+* We can manipulate the user data freely .Eg . when we need to fix a file in a data structure ,we may need copy in and copy out
 
 
 
