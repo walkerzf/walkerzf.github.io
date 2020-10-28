@@ -2,94 +2,101 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://walkerzf.github.io/2020/10/15/hello-world/</loc>
+    <loc>https://walkerzf.github.io/about/index.html</loc>
     
-    <lastmod>2020-10-22</lastmod>
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/2020/10/28/TrapLab/</loc>
+    
+    <lastmod>2020-10-28</lastmod>
     
   </url>
   
   <url>
     <loc>https://walkerzf.github.io/2020/10/22/PgtblLab/</loc>
     
-    <lastmod>2020-10-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://walkerzf.github.io/1/index.html</loc>
-    
-    <lastmod>2020-10-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://walkerzf.github.io/404.html</loc>
-    
-    <lastmod>2020-10-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://walkerzf.github.io/about/index.html</loc>
-    
-    <lastmod>2020-10-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://walkerzf.github.io/books/index.html</loc>
-    
-    <lastmod>2020-10-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://walkerzf.github.io/categories/index.html</loc>
-    
-    <lastmod>2020-10-22</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://walkerzf.github.io/links/index.html</loc>
-    
-    <lastmod>2020-10-22</lastmod>
+    <lastmod>2020-10-28</lastmod>
     
   </url>
   
   <url>
     <loc>https://walkerzf.github.io/repository/index.html</loc>
     
-    <lastmod>2020-10-22</lastmod>
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/links/index.html</loc>
+    
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/2020/10/15/hello-world/</loc>
+    
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/books/index.html</loc>
+    
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/categories/index.html</loc>
+    
+    <lastmod>2020-10-28</lastmod>
     
   </url>
   
   <url>
     <loc>https://walkerzf.github.io/tags/index.html</loc>
     
-    <lastmod>2020-10-22</lastmod>
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/404.html</loc>
+    
+    <lastmod>2020-10-28</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://walkerzf.github.io/1/index.html</loc>
+    
+    <lastmod>2020-10-28</lastmod>
     
   </url>
   
 
   <url>
     <loc>https://walkerzf.github.io/</loc>
-    <lastmod>2020-10-22</lastmod>
+    <lastmod>2020-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
   
   <url>
-    <loc>https://walkerzf.github.io/tags/intro/</loc>
-    <lastmod>2020-10-22</lastmod>
+    <loc>https://walkerzf.github.io/tags/Lab/</loc>
+    <lastmod>2020-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://walkerzf.github.io/tags/Lab/</loc>
-    <lastmod>2020-10-22</lastmod>
+    <loc>https://walkerzf.github.io/tags/intro/</loc>
+    <lastmod>2020-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
@@ -97,15 +104,15 @@
 
   
   <url>
-    <loc>https://walkerzf.github.io/categories/intro/</loc>
-    <lastmod>2020-10-22</lastmod>
+    <loc>https://walkerzf.github.io/categories/6-S081/</loc>
+    <lastmod>2020-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
   
   <url>
-    <loc>https://walkerzf.github.io/categories/6-S081/</loc>
-    <lastmod>2020-10-22</lastmod>
+    <loc>https://walkerzf.github.io/categories/intro/</loc>
+    <lastmod>2020-10-28</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
   </url>
