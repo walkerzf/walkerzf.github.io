@@ -13,7 +13,7 @@ This lab explores how system calls are implemented using traps.
 
 # Part 1 Assembly
 
-This part is a warm-up exercise  to let you know a little more about Risc-v Assembly.
+This part is a warm-up exercise  to let you know a little more about Risc-v Assemble.
 
 # Part 2  Backtrace
 
@@ -23,7 +23,7 @@ Note that the return address lives at a fixed offset (-8) from the frame pointer
 
 The operation on the pointer.
 
-Xv6 allocates one page for each stack in the xv6 kernel at PAGE-aligned address.  If the `fp` not satisfied the one PGSIZE , the fp will at the bottom of the call stack
+Xv6 allocates one page for each stack in the xv6 kernel at PAGE-aligned address.  If the `fp` not satisfied the one PGSIZE , the `fp` will at the bottom of the call stack
 
 ```c
 
@@ -49,13 +49,13 @@ void backtrace(void)
 
 In this part , we want to add two system call  to xv6 . 
 
-Once in user code we  invoke system call ,  The mode will convert from user mode - > kernel mode . `ecall->usertrap->usertrapret->sret` ,  after exiting the kernel mode ,the `pc` will jump to the  `p->tramframe->epc` which saves the `sepc` .  So we know when to call `handler` function (time interrupt) , after `interrupt ` we need to jump the `handler` function ,which means we  fix the value in `p->tramframe->epc` . 
+Once in user code we  invoke system call ,  The mode will convert from `user mode` - > `kernel mode ` .`` ecall->usertrap->usertrapret->sret` ,  after exiting the kernel mode ,the `pc` will jump to the  `p->tramframe->epc` which saves the `sepc` .  So we know when to call `handler` function (time interrupt) , after `interrupt ` we need to jump the `handler` function ,which means we  fix the value in `p->tramframe->epc` . 
 
 The `function pointer ` aka the address of the function ,aka the value of `epc`.
 
 In user code , we invoke `sigalarm`. In this system call implementation, we need to save the `interval` and `function pointer` in `proc` structure , an return user  code ,  the `p->tramfram->epc` will be the next of `ecall`. 
 
-When we have a timer interrupt ,we need  the `epc` be the `function pointer` , for resuming the  interrupted user code . Because usually  we return the interrupted user code, this time ,we need to jump to`handler` function ,we need to reserve the `p->tramframe->*`  and change the `p->tramframe->epc` be the `function pointer` . In `handler ` function ,we invoke `sigreturn` system call. In this implementation , we restore the saved registers  when  interrupted ,and jump to the  original `p->tramframe->epc`.
+When we have a timer interrupt ,we need  the `epc` be the `function pointer` , for resuming the  interrupted user code . Because usually  we return the interrupted user code, this time ,we need to jump to`handler` function ,we need to reserve the `p->tramframe->*`  and change the `p->tramframe->epc` be the `function pointer` . In `handler ` function ,we invoke `sigreturn` system call. In this implementation , we restore the saved registers  when  interrupted ,and jump to the  original `p->tramframe->epc` resume the user code .
 
 ``` c
 if (which_dev == 2)
