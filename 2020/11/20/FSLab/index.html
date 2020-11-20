@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>6.S081 FS Lab | Zat &#39;s Blog</title>
+  <meta name="description" content="FS LabIn this lab you will add large files and symbolic links to the xv6 file system. In the first part ,  you will make the max size of a file in xv6 much bigger through sacrifice a direct block and">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.S081 FS Lab">
+<meta property="og:url" content="https://walkerzf.github.io/2020/11/20/FSLab/index.html">
+<meta property="og:site_name" content="Zat&#39;s Blog">
+<meta property="og:description" content="FS LabIn this lab you will add large files and symbolic links to the xv6 file system. In the first part ,  you will make the max size of a file in xv6 much bigger through sacrifice a direct block and">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-20T03:10:00.000Z">
+<meta property="article:modified_time" content="2020-11-20T06:46:55.421Z">
+<meta property="article:author" content="Zhou Fang">
+<meta property="article:tag" content="Lab">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://walkerzf.github.io/2020/11/20/FSLab/index.html">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="Zat's Blog" type="application/atom+xml">
+</head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/walkerzf" target="_blank">
+          <img class="img-circle img-rotate" src="/images/Halu.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Zhou Fang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Learner .Want to be a thinker.</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hang Zhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/walkzf" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Welcome to my Blog!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/6-S081/">6.S081</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/intro/">intro</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lab/" rel="tag">Lab</a><span class="tag-list-count">3</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intro/" rel="tag">intro</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Lab/" style="font-size: 14px;">Lab</a> <a href="/tags/intro/" style="font-size: 13px;">intro</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/20/FSLab/" class="title">6.S081 FS Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-20T03:10:00.000Z" itemprop="datePublished">2020-11-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/28/TrapLab/" class="title">6.S081 Traps Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-28T12:00:00.000Z" itemprop="datePublished">2020-10-28</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/22/PgtblLab/" class="title">6.S081 Pgtbl Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-22T15:13:14.000Z" itemprop="datePublished">2020-10-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/intro/">intro</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/15/hello-world/" class="title">Introduction</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-15T12:14:25.000Z" itemprop="datePublished">2020-10-15</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#FS-Lab"><span class="toc-number">1.</span> <span class="toc-text">FS Lab</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Part-1-Large-files"><span class="toc-number">2.</span> <span class="toc-text">Part 1 Large files</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Part-2-Symbolic-links"><span class="toc-number">3.</span> <span class="toc-text">Part 2  Symbolic links</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-FSLab" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      6.S081 FS Lab
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/11/20/FSLab/" class="article-date">
+	  <time datetime="2020-11-20T03:10:00.000Z" itemprop="datePublished">2020-11-20</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/6-S081/">6.S081</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Lab/" rel="tag">Lab</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/11/20/FSLab/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="FS-Lab"><a href="#FS-Lab" class="headerlink" title="FS Lab"></a>FS Lab</h1><p>In this lab you will add large files and symbolic links to the xv6 file system.</p>
+<p>In the first part ,  you will make the max size of a file in <code>xv6</code> much bigger through sacrifice a direct block and adding a doubly-indirect block. In the second part , you will add symbolic link to the file in <code>xv6</code> .Symbolic links resembles hard links, but hard links are restricted to pointing to file on the same disk, while symbolic links can cross disk devices. This is a good exercise to know about the pathname lookup in xv6</p>
+<h1 id="Part-1-Large-files"><a href="#Part-1-Large-files" class="headerlink" title="Part 1 Large files"></a>Part 1 Large files</h1><p>The first 11 elements of <code>ip-&gt;addrs[]</code> should be direct blocks; the 12th should be a singly-indirect block (just like the current one); the 13th should be your new doubly-indirect block. You are done with this exercise when <code>bigfile</code> writes 65803 blocks .</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NDIRECT 11</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DDIRECT 12</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> NINDIRECT (BSIZE / sizeof(uint))</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">inode</span> &#123;</span></span><br><span class="line">  <span class="comment">//...//</span></span><br><span class="line">  uint addrs[NDIRECT+<span class="number">1</span>+<span class="number">1</span>];</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>bmap</code> function need to handle the doubly-indirect block</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"> uint</span><br><span class="line">bmap(struct inode *ip, uint bn)</span><br><span class="line">&#123;</span><br><span class="line">  uint addr, *a;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">bp</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (bn &lt; NDIRECT)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ((addr = ip-&gt;addrs[bn]) == <span class="number">0</span>)</span><br><span class="line">      ip-&gt;addrs[bn] = addr = balloc(ip-&gt;dev);</span><br><span class="line">    <span class="keyword">return</span> addr;</span><br><span class="line">  &#125;</span><br><span class="line">  bn -= NDIRECT;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (bn &lt; NINDIRECT)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">// Load singly-indirect block, allocating if necessary.</span></span><br><span class="line">    <span class="keyword">if</span> ((addr = ip-&gt;addrs[NDIRECT]) == <span class="number">0</span>)</span><br><span class="line">      ip-&gt;addrs[NDIRECT] = addr = balloc(ip-&gt;dev);</span><br><span class="line">    bp = bread(ip-&gt;dev, addr);</span><br><span class="line">    a = (uint *)bp-&gt;data;</span><br><span class="line">    <span class="keyword">if</span> ((addr = a[bn]) == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      a[bn] = addr = balloc(ip-&gt;dev);</span><br><span class="line">      log_write(bp);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    <span class="keyword">return</span> addr;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">    <span class="comment">// Load doubly-indirect block, allocating if necessary.</span></span><br><span class="line">    bn -= NINDIRECT;</span><br><span class="line">    <span class="comment">//allocate</span></span><br><span class="line">    <span class="keyword">if</span> ((addr = ip-&gt;addrs[DDIRECT]) == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      ip-&gt;addrs[DDIRECT] = addr = balloc(ip-&gt;dev);</span><br><span class="line">    &#125;</span><br><span class="line">    bp = bread(ip-&gt;dev, addr);</span><br><span class="line">    a = (uint *)bp-&gt;data;</span><br><span class="line">     <span class="comment">//doubly-indirect block ,we need to allocate on the block </span></span><br><span class="line">    <span class="keyword">int</span> index = bn / NINDIRECT;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= index; i++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> ((addr = a[i]) == <span class="number">0</span>)</span><br><span class="line">      &#123;	</span><br><span class="line">        a[i] = addr = balloc(ip-&gt;dev);</span><br><span class="line">        <span class="comment">//log write must be in the loop </span></span><br><span class="line">        <span class="comment">//because when we read we have not the fs syscall</span></span><br><span class="line">        log_write(bp);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  	</span><br><span class="line">    brelse(bp);</span><br><span class="line">     <span class="comment">//read the exacyly indirect block , and allocate a block and write </span></span><br><span class="line">    bn -= NINDIRECT * index;</span><br><span class="line">    bp = bread(ip-&gt;dev, addr);</span><br><span class="line">    a = (uint *)bp-&gt;data;</span><br><span class="line">    <span class="keyword">if</span> ((addr = a[bn]) == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      a[bn] = addr = balloc(ip-&gt;dev);</span><br><span class="line">      log_write(bp);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    <span class="keyword">return</span> addr;</span><br><span class="line">  </span><br><span class="line"></span><br><span class="line">  panic(<span class="string">"bmap: out of range"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Make sure that <code>struct inode</code> and <code>struct dinode</code> have the same number of elements in their <code>addrs[]</code> arrays. We need  to fix the <code>struct dinode</code>  in the same way.</p>
+<p><code>itrunc</code>  function need to erase the content on the all block belonging to the <code>inode</code> or <code>file</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Truncate inode (discard contents).</span></span><br><span class="line"><span class="comment">// Caller must hold ip-&gt;lock.</span></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">itrunc</span><span class="params">(struct inode *ip)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> i, j;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">bp</span>;</span></span><br><span class="line">  uint *a;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; NDIRECT; i++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (ip-&gt;addrs[i])</span><br><span class="line">    &#123;</span><br><span class="line">      bfree(ip-&gt;dev, ip-&gt;addrs[i]);</span><br><span class="line">      ip-&gt;addrs[i] = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (ip-&gt;addrs[NDIRECT])</span><br><span class="line">  &#123;</span><br><span class="line">    bp = bread(ip-&gt;dev, ip-&gt;addrs[NDIRECT]);</span><br><span class="line">    a = (uint *)bp-&gt;data;</span><br><span class="line">    <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; NINDIRECT; j++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> (a[j])</span><br><span class="line">        bfree(ip-&gt;dev, a[j]);</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    bfree(ip-&gt;dev, ip-&gt;addrs[NDIRECT]);</span><br><span class="line">    ip-&gt;addrs[NDIRECT] = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (ip-&gt;addrs[DDIRECT])</span><br><span class="line">  &#123;</span><br><span class="line">    bp = bread(ip-&gt;dev, ip-&gt;addrs[DDIRECT]);</span><br><span class="line">    a = (uint *)bp-&gt;data;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">buf</span> *<span class="title">b</span>;</span></span><br><span class="line">    uint * ba;</span><br><span class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; NINDIRECT; i++)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> (a[i])</span><br><span class="line">      &#123;</span><br><span class="line">        b = bread(ip-&gt;dev, a[i]);</span><br><span class="line">        ba = (uint *)b-&gt;data;</span><br><span class="line">        <span class="keyword">for</span> (j = <span class="number">0</span>; j &lt; NINDIRECT; j++)&#123;</span><br><span class="line">          <span class="keyword">if</span>(ba[j]) bfree(ip-&gt;dev,ba[j]);</span><br><span class="line">        &#125;</span><br><span class="line">        brelse(b);</span><br><span class="line">        bfree(ip-&gt;dev,a[i]);</span><br><span class="line">        a[i] = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    brelse(bp);</span><br><span class="line">    bfree(ip-&gt;dev, ip-&gt;addrs[DDIRECT]);</span><br><span class="line">    ip-&gt;addrs[DDIRECT] = <span class="number">0</span>;  </span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ip-&gt;<span class="built_in">size</span> = <span class="number">0</span>;</span><br><span class="line">  iupdate(ip);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="Part-2-Symbolic-links"><a href="#Part-2-Symbolic-links" class="headerlink" title="Part 2  Symbolic links"></a>Part 2  Symbolic links</h1><p>In this part of lab , we need to add a system call into <code>xv6</code> , which is <code>symbolic links</code> i.e. <code>soft link</code> . </p>
+<p>The <code>symbolic links</code> wants we to creates a new <code>file</code> which type is still <code>FD_INODE</code>, but the  <code>inode&#39;s</code> type is  <code>T_SYMBOLIC</code> ,  so we in the system call we need to allocate a new <code>inode</code> ,and allocate a new block for the first <code>direct block</code> .and write the length of the path and the path string in the block. Because the size of the length must a four-byte variable ,which is convenient for the <code>read</code> data from the block.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">// labfs symbolic system call</span></span><br><span class="line">uint64</span><br><span class="line">sys_symlink(<span class="keyword">void</span>)</span><br><span class="line">&#123; </span><br><span class="line">  <span class="keyword">char</span>  target[MAXPATH], path[MAXPATH];</span><br><span class="line"> <span class="comment">// struct inode *dp;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">inode</span> *<span class="title">ip</span>;</span></span><br><span class="line">  <span class="comment">//struct buf * b;</span></span><br><span class="line">  <span class="comment">//char * c;</span></span><br><span class="line">  <span class="keyword">if</span> (argstr(<span class="number">0</span>, target, MAXPATH) &lt; <span class="number">0</span> || argstr(<span class="number">1</span>, path, MAXPATH) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  begin_op();</span><br><span class="line">  <span class="comment">//create will have the lock for the inode ip</span></span><br><span class="line">  <span class="keyword">if</span>((ip =  create(path,T_SYMLINK,<span class="number">0</span>,<span class="number">0</span>))==<span class="number">0</span>)&#123;</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">int</span> len = <span class="built_in">strlen</span>(target);</span><br><span class="line">  writei(ip,<span class="number">0</span>,(uint64)&amp;len,<span class="number">0</span>,<span class="keyword">sizeof</span>(len));</span><br><span class="line">  writei(ip,<span class="number">0</span>,(uint64)target,<span class="keyword">sizeof</span>(len),len+<span class="number">1</span>);</span><br><span class="line">  iunlockput(ip);</span><br><span class="line">  end_op();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>In  <code>sys_open</code> system call , we need to fix the  function to handle the <code>inode&#39;s</code> type is <code>T_SYMBOLIC</code>. And we should  return false when we in a circle!</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> depth = <span class="number">0</span>,len ;</span><br><span class="line">  <span class="keyword">char</span> next[MAXPATH+<span class="number">1</span>];</span><br><span class="line">  <span class="keyword">if</span>(!(omode&amp;O_NOFOLLOW))&#123;</span><br><span class="line">    <span class="keyword">for</span>( ; depth&lt;<span class="number">10</span> &amp;&amp; ip-&gt;type ==T_SYMLINK ;depth++)&#123;</span><br><span class="line">      readi(ip,<span class="number">0</span>,(uint64)&amp;len,<span class="number">0</span>,<span class="keyword">sizeof</span>(len));</span><br><span class="line">      readi(ip,<span class="number">0</span>,(uint64)next,<span class="keyword">sizeof</span>(len),len);</span><br><span class="line">      next[len]= <span class="number">0</span>;</span><br><span class="line">      iunlockput(ip);</span><br><span class="line">      <span class="keyword">if</span>((ip=namei(next))==<span class="number">0</span>)&#123;</span><br><span class="line">        end_op();</span><br><span class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      ilock(ip);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(depth&gt;=<span class="number">10</span>)&#123;</span><br><span class="line">    iunlockput(ip);</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://walkerzf.github.io/2020/11/20/FSLab/" title="6.S081 FS Lab" target="_blank" rel="external">https://walkerzf.github.io/2020/11/20/FSLab/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/walkerzf" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/Halu.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/walkerzf" target="_blank"><span class="text-dark">Zhou Fang</span><small class="ml-1x">Learner .Want to be a thinker.</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/10/28/TrapLab/" title="6.S081 Traps Lab"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/walkzf" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>
