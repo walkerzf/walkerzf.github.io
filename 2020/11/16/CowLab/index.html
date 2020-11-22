@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>6.S081 Cow Lab | Zat &#39;s Blog</title>
+  <meta name="description" content="Cow LabVirtual memory provides a level of indirection: the kernel can intercept memory references by marking PTEs invalid or read-only, leading to page faults， and can change what addresses mean by mo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.S081 Cow Lab">
+<meta property="og:url" content="https://walkerzf.github.io/2020/11/16/CowLab/index.html">
+<meta property="og:site_name" content="Zat&#39;s Blog">
+<meta property="og:description" content="Cow LabVirtual memory provides a level of indirection: the kernel can intercept memory references by marking PTEs invalid or read-only, leading to page faults， and can change what addresses mean by mo">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-16T07:20:14.000Z">
+<meta property="article:modified_time" content="2020-11-22T06:24:36.444Z">
+<meta property="article:author" content="Zhou Fang">
+<meta property="article:tag" content="Lab">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://walkerzf.github.io/2020/11/16/CowLab/index.html">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="Zat's Blog" type="application/atom+xml">
+</head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/walkerzf" target="_blank">
+          <img class="img-circle img-rotate" src="/images/Halu.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Zhou Fang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Learner .Want to be a thinker.</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hang Zhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/walkzf" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Welcome to my Blog!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/6-S081/">6.S081</a><span class="category-list-count">6</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/intro/">intro</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lab/" rel="tag">Lab</a><span class="tag-list-count">6</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intro/" rel="tag">intro</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Lab/" style="font-size: 14px;">Lab</a> <a href="/tags/intro/" style="font-size: 13px;">intro</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/20/FSLab/" class="title">6.S081 FS Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-20T03:10:00.000Z" itemprop="datePublished">2020-11-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/17/Multithreading/" class="title">6.S081 Multithreading Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-17T06:10:00.000Z" itemprop="datePublished">2020-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/16/CowLab/" class="title">6.S081 Cow Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-16T07:20:14.000Z" itemprop="datePublished">2020-11-16</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/13/LazyLab/" class="title">6.S081 Lazy Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-13T12:10:14.000Z" itemprop="datePublished">2020-11-13</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/10/28/TrapLab/" class="title">6.S081 Traps Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-10-28T12:00:00.000Z" itemprop="datePublished">2020-10-28</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Cow-Lab"><span class="toc-number">1.</span> <span class="toc-text">Cow Lab</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Fork’s-Problem"><span class="toc-number">2.</span> <span class="toc-text">Fork’s Problem</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Implementation"><span class="toc-number">3.</span> <span class="toc-text">Implementation</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Uvmcopy-not-allocate-the-new-pa"><span class="toc-number">3.1.</span> <span class="toc-text">Uvmcopy not allocate the new pa</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Kalloc-Kfree-increase-cnt"><span class="toc-number">3.2.</span> <span class="toc-text">Kalloc Kfree increase cnt</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Handle-function-in-Trap"><span class="toc-number">3.3.</span> <span class="toc-text">Handle function in Trap</span></a></li></ol></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-CowLab" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      6.S081 Cow Lab
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/11/16/CowLab/" class="article-date">
+	  <time datetime="2020-11-16T07:20:14.000Z" itemprop="datePublished">2020-11-16</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/6-S081/">6.S081</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Lab/" rel="tag">Lab</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/11/16/CowLab/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="Cow-Lab"><a href="#Cow-Lab" class="headerlink" title="Cow Lab"></a>Cow Lab</h1><p>Virtual memory provides a level of indirection: the kernel can intercept memory references by marking PTEs invalid or read-only, leading to <strong>page faults</strong>， and can change what addresses mean by modifying PTEs. There is a saying in computer systems that any systems problem can be solved with a level of indirection. <strong>The lazy allocation lab provided one example which is talked about in  the last lab</strong>. This lab explores another example: copy-on write fork.</p>
+<h1 id="Fork’s-Problem"><a href="#Fork’s-Problem" class="headerlink" title="Fork’s Problem"></a>Fork’s Problem</h1><p>The fork() system call in xv6 copies all of the parent process’s user-space memory into the child. If the parent is large, copying can take a long time. Worse, the work is often largely wasted; for example, a fork() followed by exec() in the child will cause the child to discard the copied memory, probably without ever using most of it. On the other hand, if both parent and child use a page, and one or both writes it, a copy is truly needed.</p>
+<h1 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h1><p>The goal of copy-on-write (COW) fork() is to defer allocating and copying physical memory pages for the child until the copies are actually needed, if ever.</p>
+<p><code>Cow</code> fork will creates just a page table for the child , with PTEs for user memory pointing to the parent’s  <code>pa</code>. <code>Cow</code> fork will marks all the user PTEs in both parent and child as not writable. When either process wants to write any of these unwritable pages, will triggle a page fault .The kernel trap will handle this fault , allocates a page of physical memory for the page fault,copies the original page into the new page, and <strong>modifies the relevant PTE in the faulting process to refer to the new page</strong>, this time with the PTE marked writeable. The original pa will be not changed.</p>
+<p><code>uvmcopy</code> we will not allocate new pages , we increase the <code>refcnt</code>  for the pa.</p>
+<h2 id="Uvmcopy-not-allocate-the-new-pa"><a href="#Uvmcopy-not-allocate-the-new-pa" class="headerlink" title="Uvmcopy not allocate the new pa"></a><code>Uvmcopy</code> not allocate the new pa</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">uvmcopy</span><span class="params">(<span class="keyword">pagetable_t</span> old, <span class="keyword">pagetable_t</span> <span class="keyword">new</span>, uint64 sz)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte;</span><br><span class="line">  uint64 pa, i;</span><br><span class="line">  uint flags;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; sz; i += PGSIZE)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ((pte = walk(old, i, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">"uvmcopy: pte should exist"</span>);</span><br><span class="line">    <span class="keyword">if</span> ((*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">      panic(<span class="string">"uvmcopy: page not present"</span>);</span><br><span class="line">    <span class="comment">//fix the permission bits</span></span><br><span class="line">    pa = PTE2PA(*pte);</span><br><span class="line">    *pte &amp;= ~PTE_W;</span><br><span class="line">    flags = PTE_FLAGS(*pte);</span><br><span class="line">	<span class="comment">//not allocated</span></span><br><span class="line">    <span class="comment">// if((mem = kalloc()) == 0)</span></span><br><span class="line">    <span class="comment">//   goto err;</span></span><br><span class="line">    <span class="comment">// memmove(mem, (char*)pa, PGSIZE);</span></span><br><span class="line">	<span class="comment">//increase refcnt</span></span><br><span class="line">    increse(pa);</span><br><span class="line">    <span class="comment">//map the va to the same pa using flags</span></span><br><span class="line">    <span class="keyword">if</span> (mappages(<span class="keyword">new</span>, i, PGSIZE, (uint64)pa, flags) != <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">goto</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">err:</span><br><span class="line">  uvmunmap(<span class="keyword">new</span>, <span class="number">0</span>, i / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Kalloc-Kfree-increase-cnt"><a href="#Kalloc-Kfree-increase-cnt" class="headerlink" title="Kalloc Kfree increase cnt"></a><code>Kalloc</code> <code>Kfree</code> <code>increase cnt</code></h2><p><code>kalloc</code> , we maintain the <code>refcnt</code> for every physical page .In the initialization , the <code>refcnt</code> will be <code>writed</code>to 1,because  in the <code>freerange</code> ,we call <code>kfree</code> which decreases the <code>refcnt</code> for every <code>pa</code>.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> refcnt[PHYSTOP / PGSIZE];</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freerange</span><span class="params">(<span class="keyword">void</span> *pa_start, <span class="keyword">void</span> *pa_end)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> *p;</span><br><span class="line">  p = (<span class="keyword">char</span> *)PGROUNDUP((uint64)pa_start);</span><br><span class="line">  <span class="keyword">for</span> (; p + PGSIZE &lt;= (<span class="keyword">char</span> *)pa_end; p += PGSIZE)</span><br><span class="line">  &#123;</span><br><span class="line">    refcnt[(uint64)p / PGSIZE] = <span class="number">1</span>;</span><br><span class="line">    kfree(p);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>increase refcnt</code> and <code>kfree</code> is a combination , which is increase the <code>refcnt</code> of the <code>pa</code> , the other is decrease the <code>refcnt</code> of the pa .In the case when the <code>refcnt</code> of the <code>pa</code> down to zero , we really free the <code>pa</code>!</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">increse</span><span class="params">(uint64 pa)</span></span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="comment">//acquire the lock</span></span><br><span class="line">  acquire(&amp;kmem.lock);</span><br><span class="line">  <span class="keyword">int</span> pn = pa / PGSIZE;</span><br><span class="line">  <span class="keyword">if</span>(pa&gt;PHYSTOP || refcnt[pn]&lt;<span class="number">1</span>)&#123;</span><br><span class="line">    panic(<span class="string">"increase ref cnt"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  refcnt[pn]++;</span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem.lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">kfree</span><span class="params">(<span class="keyword">void</span> *pa)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span>;</span></span><br><span class="line">  r = (struct <span class="built_in">run</span> *)pa;</span><br><span class="line">  <span class="keyword">if</span> (((uint64)pa % PGSIZE) != <span class="number">0</span> || (<span class="keyword">char</span> *)pa &lt; <span class="built_in">end</span> || (uint64)pa &gt;= PHYSTOP)</span><br><span class="line">    panic(<span class="string">"kfree"</span>);</span><br><span class="line">	<span class="comment">//when we free the page decraese the refcnt of the pa </span></span><br><span class="line">    <span class="comment">//we need to acquire the lock</span></span><br><span class="line">    <span class="comment">//and get the really current cnt for the current fucntion</span></span><br><span class="line">  acquire(&amp;kmem.lock);</span><br><span class="line">  <span class="keyword">int</span> pn = (uint64)r / PGSIZE;</span><br><span class="line">  <span class="keyword">if</span> (refcnt[pn] &lt; <span class="number">1</span>)</span><br><span class="line">    panic(<span class="string">"kfree panic"</span>);</span><br><span class="line">  refcnt[pn] -= <span class="number">1</span>;</span><br><span class="line">  <span class="keyword">int</span> tmp = refcnt[pn];</span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem.lock);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (tmp &gt;<span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">  <span class="comment">// Fill with junk to catch dangling refs.</span></span><br><span class="line">  <span class="built_in">memset</span>(pa, <span class="number">1</span>, PGSIZE);</span><br><span class="line"></span><br><span class="line">  acquire(&amp;kmem.lock);</span><br><span class="line">  r-&gt;next = kmem.freelist;</span><br><span class="line">  kmem.freelist = r;</span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem.lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>kalloc</code> function will allocate a <code>pa</code> ,  if the <code>pa</code> ref cnt is not valid , <code>panic</code>.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> *</span><br><span class="line">kalloc(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span>;</span></span><br><span class="line"></span><br><span class="line">  acquire(&amp;kmem.lock);</span><br><span class="line">  r = kmem.freelist;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (r)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">int</span> pn = (uint64)r / PGSIZE;</span><br><span class="line">    <span class="keyword">if</span>(refcnt[pn]!=<span class="number">0</span>)&#123;</span><br><span class="line">      panic(<span class="string">"refcnt kalloc"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    refcnt[pn] = <span class="number">1</span>;</span><br><span class="line">    kmem.freelist = r-&gt;next;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem.lock);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (r)</span><br><span class="line">    <span class="built_in">memset</span>((<span class="keyword">char</span> *)r, <span class="number">5</span>, PGSIZE); <span class="comment">// fill with junk</span></span><br><span class="line">  <span class="keyword">return</span> (<span class="keyword">void</span> *)r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Handle-function-in-Trap"><a href="#Handle-function-in-Trap" class="headerlink" title="Handle function in Trap"></a>Handle function in Trap</h2><p>The <code>r_scause</code> of page fault is 15 or 13. In <code>usertrap</code> , we have <code>cowfault</code>.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (r_scause() == <span class="number">15</span>)</span><br><span class="line"> &#123;</span><br><span class="line">   <span class="keyword">if</span> ((cowfault(p-&gt;pagetable, r_stval()) )&lt; <span class="number">0</span>)</span><br><span class="line">   &#123;</span><br><span class="line">     p-&gt;killed = <span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong><code>cowfault</code> function</strong></p>
+<ul>
+<li>handle the  invalid <code>va</code> <ul>
+<li>more than <code>MAXVA</code></li>
+<li>not in the page table</li>
+<li>not set user bit or valid bit</li>
+</ul>
+</li>
+<li>allocate a new <code>pa</code> , copy the original content to the new <code>pa</code> ,  <ul>
+<li><code>unmap</code> and  <code>map</code> for this <code>pte</code> entry!</li>
+<li>or we cook up  the <code>pte</code>straightly</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">cowfault</span><span class="params">(<span class="keyword">pagetable_t</span> pagetable, uint64 va)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (va &gt;= MAXVA)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">pte_t</span> *pte = walk(pagetable, va, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> (pte == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span> ((*pte &amp; PTE_U) == <span class="number">0</span> || (*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  uint64 pa1 = PTE2PA(*pte);</span><br><span class="line">  uint64 pa2 = (uint64)kalloc();</span><br><span class="line">  <span class="keyword">if</span> (pa2 == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="comment">//panic("cow panic kalloc");</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line"> </span><br><span class="line">  memmove((<span class="keyword">void</span> *)pa2, (<span class="keyword">void</span> *)pa1, PGSIZE);</span><br><span class="line">  *pte = PA2PTE(pa2) | PTE_U | PTE_V | PTE_W | PTE_X|PTE_R;</span><br><span class="line">   kfree((<span class="keyword">void</span> *)pa1);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>One more thing ,according to the hint :  Modify <code>copyout()</code> to use the same scheme as page faults when it encounters a COW page.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">va0 = PGROUNDDOWN(dstva);</span><br><span class="line"><span class="keyword">if</span> (va0 &gt; MAXVA)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;    </span><br><span class="line"><span class="keyword">if</span>(cowfault(pagetable,va0)&lt;<span class="number">0</span>)&#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>.<strong>The course lab site</strong> :<a href="https://pdos.csail.mit.edu/6.828/2020/labs/cow.html">MIT 6.S081 cow Lab</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://walkerzf.github.io/2020/11/16/CowLab/" title="6.S081 Cow Lab" target="_blank" rel="external">https://walkerzf.github.io/2020/11/16/CowLab/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/walkerzf" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/Halu.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/walkerzf" target="_blank"><span class="text-dark">Zhou Fang</span><small class="ml-1x">Learner .Want to be a thinker.</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/2020/11/17/Multithreading/" title="6.S081 Multithreading Lab"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/2020/11/13/LazyLab/" title="6.S081 Lazy Lab"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/walkzf" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>

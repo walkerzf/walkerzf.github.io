@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://walkerzf.github.io/2020/11/20/FSLab/</loc>
-    <lastmod>2020-11-20</lastmod>
+    <loc>https://walkerzf.github.io/2020/11/16/CowLab/</loc>
+    <lastmod>2020-11-22</lastmod>
   </url>
   <url>
-    <loc>https://walkerzf.github.io/2020/10/15/hello-world/</loc>
-    <lastmod>2020-11-20</lastmod>
+    <loc>https://walkerzf.github.io/2020/11/13/LazyLab/</loc>
+    <lastmod>2020-11-22</lastmod>
   </url>
   <url>
-    <loc>https://walkerzf.github.io/2020/10/22/PgtblLab/</loc>
-    <lastmod>2020-11-20</lastmod>
+    <loc>https://walkerzf.github.io/2020/11/17/Multithreading/</loc>
+    <lastmod>2020-11-22</lastmod>
   </url>
   <url>
     <loc>https://walkerzf.github.io/2020/10/28/TrapLab/</loc>
-    <lastmod>2020-11-20</lastmod>
+    <lastmod>2020-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://walkerzf.github.io/2020/10/15/hello-world/</loc>
+    <lastmod>2020-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://walkerzf.github.io/2020/10/22/PgtblLab/</loc>
+    <lastmod>2020-11-22</lastmod>
+  </url>
+  <url>
+    <loc>https://walkerzf.github.io/2020/11/20/FSLab/</loc>
+    <lastmod>2020-11-22</lastmod>
   </url>
 </urlset> 
