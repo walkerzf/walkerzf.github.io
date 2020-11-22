@@ -1,5 +1,5 @@
 ---
-title: "6.S081 Pgtbl Lab"
+title: "6.S081 Cow Lab"
 date: 2020-11-16 15:20:14
 categories:
   - 6.S081
