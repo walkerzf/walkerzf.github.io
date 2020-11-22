@@ -1,5 +1,5 @@
 ---
-title: 6.S081 FS Lab
+title: 6.S081 Lock Lab
 date: 2020-11-19 15:20:00
 categories:
   - 6.S081
