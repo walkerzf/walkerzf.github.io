@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>6.S081 mmap Lab | Zat &#39;s Blog</title>
+  <meta name="description" content="mmap LabThe mmap and munmap system calls allow UNIX programs to exert detailed control over their address spaces. They can be used to share memory among processes, to map files into process address sp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="6.S081 mmap Lab">
+<meta property="og:url" content="https://walkerzf.github.io/2020/11/22/mmap/index.html">
+<meta property="og:site_name" content="Zat&#39;s Blog">
+<meta property="og:description" content="mmap LabThe mmap and munmap system calls allow UNIX programs to exert detailed control over their address spaces. They can be used to share memory among processes, to map files into process address sp">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-11-22T15:10:00.000Z">
+<meta property="article:modified_time" content="2020-11-22T11:04:23.464Z">
+<meta property="article:author" content="Zhou Fang">
+<meta property="article:tag" content="Lab">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="https://walkerzf.github.io/2020/11/22/mmap/index.html">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 4.2.0"><link rel="alternate" href="/atom.xml" title="Zat's Blog" type="application/atom+xml">
+</head>
+
+
+<body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/walkerzf" target="_blank">
+          <img class="img-circle img-rotate" src="/images/Halu.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Zhou Fang</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Learner .Want to be a thinker.</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Hang Zhou, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-books">
+          <a href="/books">
+            
+            <i class="icon icon-book-fill"></i>
+            
+            <span class="menu-title">Books</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-links">
+          <a href="/links">
+            
+            <i class="icon icon-friendship"></i>
+            
+            <span class="menu-title">Links</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/walkzf" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>Welcome to my Blog!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/6-S081/">6.S081</a><span class="category-list-count">8</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/intro/">intro</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lab/" rel="tag">Lab</a><span class="tag-list-count">8</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/intro/" rel="tag">intro</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/tags/Lab/" style="font-size: 14px;">Lab</a> <a href="/tags/intro/" style="font-size: 13px;">intro</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">6</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/22/mmap/" class="title">6.S081 mmap Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-22T15:10:00.000Z" itemprop="datePublished">2020-11-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/20/FSLab/" class="title">6.S081 FS Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-20T03:10:00.000Z" itemprop="datePublished">2020-11-20</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/19/Lock/" class="title">6.S081 Lock Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-19T07:20:00.000Z" itemprop="datePublished">2020-11-19</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/17/Multithreading/" class="title">6.S081 Multithreading Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-17T06:10:00.000Z" itemprop="datePublished">2020-11-17</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/categories/6-S081/">6.S081</a>
+              </p>
+              <p class="item-title">
+                <a href="/2020/11/16/CowLab/" class="title">6.S081 Cow Lab</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2020-11-16T07:20:14.000Z" itemprop="datePublished">2020-11-16</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <nav id="toc" class="article-toc">
+      <h3 class="toc-title">Catalogue</h3>
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#mmap-Lab"><span class="toc-number">1.</span> <span class="toc-text">mmap Lab</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#mmap"><span class="toc-number">2.</span> <span class="toc-text">mmap</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#usertrap"><span class="toc-number">3.</span> <span class="toc-text">usertrap</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#unmmap"><span class="toc-number">4.</span> <span class="toc-text">unmmap</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Link"><span class="toc-number">5.</span> <span class="toc-text">Link</span></a></li></ol>
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-mmap" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      6.S081 mmap Lab
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/2020/11/22/mmap/" class="article-date">
+	  <time datetime="2020-11-22T15:10:00.000Z" itemprop="datePublished">2020-11-22</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/categories/6-S081/">6.S081</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link" href="/tags/Lab/" rel="tag">Lab</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2020/11/22/mmap/#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="mmap-Lab"><a href="#mmap-Lab" class="headerlink" title="mmap Lab"></a>mmap Lab</h1><p>The <code>mmap</code> and <code>munmap</code> system calls allow UNIX programs to exert detailed control over their address spaces. They can be used to share memory among processes, to map files into process address spaces,but this lab requires only a subset of its features relevant to memory-mapping a file</p>
+<h1 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a><code>mmap</code></h1><p>Keep track of what <code>mmap</code> has mapped for each process. Define a structure corresponding to the VMA (virtual memory area) ,recording the address, length, permissions, file, etc. for a virtual memory range created by <code>mmap</code> .The VMA should contain a pointer to a <code>struct file</code> for the file being mapped; <code>mmap</code> should increase the file’s reference count so that the structure doesn’t disappear when the file is closed (hint: see <code>filedup</code>). </p>
+<p><code>proc.h</code> : one more field.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">VMA</span> <span class="title">vma</span>[16];</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">VMA</span>&#123;</span></span><br><span class="line">  uint64 addr;	<span class="comment">// the start address of va </span></span><br><span class="line">  uint64 <span class="built_in">end</span>;	<span class="comment">//the end address of va</span></span><br><span class="line">  <span class="keyword">int</span> prot;		<span class="comment">// the prot permission</span></span><br><span class="line">  <span class="keyword">int</span> flags;	<span class="comment">//map shared or privaet</span></span><br><span class="line">  <span class="keyword">int</span> fd;		<span class="comment">//file descriptor</span></span><br><span class="line">  <span class="keyword">int</span> offset;	<span class="comment">//the offset of the file  = 0</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">pf</span>;</span>	<span class="comment">// the pointer to the file struct</span></span><br><span class="line">  <span class="keyword">int</span> used;		<span class="comment">//indicates this vma is used or not used</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>sys_mmap</code> : </p>
+<ul>
+<li>get the system call argument value using the helper function ,<code>argfd</code> is very interesting</li>
+<li>the file is not writable but using <code>prot  PROT_WRITE</code> and <code>MAP_SHARED</code> should be a failed <code>mmap</code></li>
+<li>get a free <code>vma</code> field to store the value  , lazy increase the size of the user process , So we ensure that <code>mmap</code> of a large file is fast, and that <code>mmap</code> of a file larger than physical memory is possible.</li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">uint64</span><br><span class="line">sys_mmap(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> = <span class="title">myproc</span>();</span></span><br><span class="line">  <span class="comment">// void * addr  uint  length  int  prot  int  flags  int  fd  int  offset</span></span><br><span class="line">  <span class="comment">//addr will always be zero</span></span><br><span class="line">  <span class="comment">// offset will be zero</span></span><br><span class="line">  <span class="keyword">int</span> length;</span><br><span class="line">  <span class="keyword">int</span> prot, flags, fd;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">f</span>;</span></span><br><span class="line">  <span class="keyword">if</span> (argint(<span class="number">1</span>, &amp;length) &lt; <span class="number">0</span> || argint(<span class="number">2</span>, &amp;prot) &lt; <span class="number">0</span> || argint(<span class="number">3</span>, &amp;flags) &lt; <span class="number">0</span> || argfd(<span class="number">4</span>, &amp;fd, &amp;f) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xffffffffffffffff</span>;</span><br><span class="line">  <span class="comment">//not allocate the pa and not really read the file for read the large file fast and large file possible</span></span><br><span class="line">  <span class="comment">//find a a,ddress</span></span><br><span class="line">  <span class="keyword">if</span>(!f-&gt;writable&amp;&amp;(prot&amp;PROT_WRITE)&amp;&amp;flags == MAP_SHARED) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span> (p-&gt;originalsize == <span class="number">-1</span>)</span><br><span class="line">    p-&gt;originalsize = p-&gt;sz;</span><br><span class="line">  <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (; index &lt; <span class="number">16</span>; index++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;vma[index].used == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"%d\n"</span>, index);</span><br><span class="line">  <span class="keyword">if</span> (index != <span class="number">16</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    filedup(f);</span><br><span class="line">    <span class="comment">//find an empty but page -aligned</span></span><br><span class="line">    uint64 va = (p-&gt;sz);</span><br><span class="line">    p-&gt;sz = va + length;</span><br><span class="line">    <span class="comment">//create a new entry in struct</span></span><br><span class="line">    p-&gt;vma[index].addr = va;</span><br><span class="line">    p-&gt;vma[index].<span class="built_in">end</span> = PGROUNDUP(va + length);</span><br><span class="line">    p-&gt;vma[index].prot = prot;</span><br><span class="line">    p-&gt;vma[index].flags = flags;</span><br><span class="line">    <span class="comment">//p-&gt;vma[index].fd = fd;</span></span><br><span class="line">    p-&gt;vma[index].offset = <span class="number">0</span>;</span><br><span class="line">    p-&gt;vma[index].pf = f;</span><br><span class="line"></span><br><span class="line">    p-&gt;vma[index].used = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">return</span> va;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0xffffffffffffffff</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="usertrap"><a href="#usertrap" class="headerlink" title="usertrap"></a><code>usertrap</code></h1><p>The page  fault handler in <code>trap.c</code>. The structure is similar to the <code>cowfault</code>!</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span> <span class="keyword">if</span> (r_scause() == <span class="number">15</span> || r_scause() == <span class="number">13</span>)</span><br><span class="line"> &#123;</span><br><span class="line"></span><br><span class="line">   <span class="keyword">if</span> (helper(p-&gt;pagetable, r_stval()) &lt; <span class="number">0</span>)</span><br><span class="line">   &#123;</span><br><span class="line">     p-&gt;killed = <span class="number">1</span>;</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>The <code>va</code> is no valid should kill the process</li>
+<li>Or we need to find the corresponding  <code>vma</code>  to know the start address address and the end address and <code>prot</code> (the name of variable makes sense plz! It makes me spend more three hours ,using <code>gdb</code> to debug plz!)</li>
+<li>read the file content and add mapping in <code>helper</code> function .The offset of the file depends on the <code>va</code> and the start of the mapping because the offset = 0  .The mapping always be <code>PGSIZE</code>.</li>
+<li><code>readi</code> needs the lock the <code>inode</code> of the file </li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">helper</span><span class="params">(<span class="keyword">pagetable_t</span> pagetable, uint64 va)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> = <span class="title">myproc</span>();</span></span><br><span class="line">  <span class="keyword">if</span> (va &gt; MAXVA || va &gt;= p-&gt;sz)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  va = PGROUNDDOWN(va);</span><br><span class="line">  <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (; index &lt; <span class="number">16</span>; index++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//printf("%d\n",p-&gt;vma[index].used);</span></span><br><span class="line">    <span class="keyword">if</span> (p-&gt;vma[index].used == <span class="number">1</span> &amp;&amp; va &gt;= p-&gt;vma[index].addr &amp;&amp; va &lt; p-&gt;vma[index].<span class="built_in">end</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">/**</span></span><br><span class="line"><span class="comment">  !!!!!! the name of variable make sense plz!!!!</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line">  <span class="comment">//printf("%d!\n", index);</span></span><br><span class="line">  <span class="keyword">if</span> (index == <span class="number">16</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">//get the index</span></span><br><span class="line">  uint64 addr = p-&gt;vma[index].addr;</span><br><span class="line">  <span class="comment">//int length = p-&gt;vma[index].length;</span></span><br><span class="line">  <span class="comment">//int prot = p-&gt;vma[index].prot;</span></span><br><span class="line">  <span class="keyword">int</span> prot = p-&gt;vma[index].prot;</span><br><span class="line">  <span class="comment">//int fd = p-&gt;vma[index].fd;</span></span><br><span class="line">  <span class="comment">//int offset = p-&gt;vma[index].offset;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">file</span> *<span class="title">pf</span> = <span class="title">p</span>-&gt;<span class="title">vma</span>[<span class="title">index</span>].<span class="title">pf</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">//allocate the pa and map</span></span><br><span class="line">  <span class="keyword">char</span> *mem;</span><br><span class="line">  mem = (<span class="keyword">char</span> *)kalloc();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (mem == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="comment">//read the file date into the pa</span></span><br><span class="line">  <span class="built_in">memset</span>(mem, <span class="number">0</span>, PGSIZE);</span><br><span class="line">  begin_op();</span><br><span class="line">  ilock(pf-&gt;ip);</span><br><span class="line">  <span class="keyword">if</span> (readi(pf-&gt;ip, <span class="number">0</span>, (uint64)mem, va - addr, PGSIZE) &lt; <span class="number">0</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    iunlock(pf-&gt;ip);</span><br><span class="line">    end_op();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  iunlock(pf-&gt;ip);</span><br><span class="line">  end_op();</span><br><span class="line">  <span class="comment">//printf("%s\n",mem[0]);</span></span><br><span class="line">  uint64 f = PTE_U;</span><br><span class="line">  <span class="keyword">if</span> (prot &amp; PROT_EXEC)</span><br><span class="line">    f |= PTE_X;</span><br><span class="line">  <span class="keyword">if</span> (prot &amp; PROT_READ)</span><br><span class="line">    f |= PTE_R;</span><br><span class="line">  <span class="keyword">if</span> (prot &amp; PROT_WRITE)</span><br><span class="line">    f |= PTE_W;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (mappages(pagetable, va, PGSIZE, (uint64)mem, f) != <span class="number">0</span>)</span><br><span class="line">  &#123;</span><br><span class="line">    kfree(mem);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="unmmap"><a href="#unmmap" class="headerlink" title="unmmap"></a><code>unmmap</code></h1><p>We need tot  find the VMA for the address range and <code>unmap</code> the specified pages  using  <code>uvmunmap</code>. Our own <code>unmmap</code> only writes back the file is mapped <code>MAP_SHARED</code> .Because the test does  not check that not dirty bit are not written back; thus you can get away with writing pages back without looking at <code>D</code> bits. </p>
+<p>In the test , we only <code>unmmap</code> the part in the beginning of the file or at the end of the file. So we do not need to dup a new <code>vma</code> for the <code>unmmap</code>. </p>
+<ul>
+<li>according to the address , we find the <code>vma</code> </li>
+<li>check the bit of the <code>flags</code> of map , to decide whether write back or not <ul>
+<li>write back using <code>writei</code> , writing to the suitable offset of the file </li>
+</ul>
+</li>
+<li>using <code>unmunmap</code> to help <code>unmap</code> the mapping in the page table</li>
+<li>do some change to the <code>vma</code>  , if the whole region of file is unmapped , we decrease the <code>refcnt</code> of the file using the helper function in <code>file.c</code></li>
+<li>Modify <code>fork</code> to ensure that the child has the same mapped regions as the parent. Don’t forget to increment the reference count for a VMA’s <code>struct file</code></li>
+</ul>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">uint64</span><br><span class="line">sys_munmap(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> = <span class="title">myproc</span>();</span></span><br><span class="line">  uint64 addr;</span><br><span class="line">  <span class="keyword">int</span> len;</span><br><span class="line">  <span class="keyword">if</span> (argaddr(<span class="number">0</span>, &amp;addr) &lt; <span class="number">0</span> || argint(<span class="number">1</span>, &amp;len) &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">int</span> index = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (; index &lt; <span class="number">16</span>; index++)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;vma[index].used == <span class="number">1</span> &amp;&amp; p-&gt;vma[index].addr &lt;= addr </span><br><span class="line">        &amp;&amp;addr&lt;p-&gt;vma[index].<span class="built_in">end</span>)</span><br><span class="line">    &#123; </span><br><span class="line">      <span class="comment">//according to the test case to code  </span></span><br><span class="line">      <span class="keyword">if</span>(p-&gt;vma[index].flags==MAP_SHARED)&#123;</span><br><span class="line">        begin_op();</span><br><span class="line">        ilock(p-&gt;vma[index].pf-&gt;ip);</span><br><span class="line">        writei(p-&gt;vma[index].pf-&gt;ip,<span class="number">1</span>,addr,addr - p-&gt;vma[index].addr,len);</span><br><span class="line">        iunlock(p-&gt;vma[index].pf-&gt;ip);</span><br><span class="line">        end_op();</span><br><span class="line">      &#125;</span><br><span class="line">      uvmunmap(p-&gt;pagetable,addr,len/PGSIZE,<span class="number">1</span>);</span><br><span class="line">      <span class="comment">//in the former part</span></span><br><span class="line">      <span class="comment">//not in the middle part</span></span><br><span class="line">      <span class="keyword">if</span>(addr==p-&gt;vma[index].addr)&#123;</span><br><span class="line">        <span class="keyword">if</span>(p-&gt;vma[index].<span class="built_in">end</span>==addr+len)&#123;</span><br><span class="line">          <span class="comment">//decrease the filecnt</span></span><br><span class="line">          fileddown(p-&gt;vma[index].pf);</span><br><span class="line">          p-&gt;vma[index].used = <span class="number">0</span>;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            p-&gt;vma[index].addr = addr+len;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;<span class="keyword">else</span> <span class="keyword">if</span>( addr+len == p-&gt;vma[index].<span class="built_in">end</span>)&#123;</span><br><span class="line">        p-&gt;vma[index].<span class="built_in">end</span> = addr+len;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="comment">//the sub of one mmap</span></span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>fork</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">  <span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>;i&lt;<span class="number">16</span>;i++)&#123;</span><br><span class="line">    np-&gt;vma[i].addr = p-&gt;vma[i].addr;</span><br><span class="line">    np-&gt;vma[i].<span class="built_in">end</span> = p-&gt;vma[i].<span class="built_in">end</span>;</span><br><span class="line">    np-&gt;vma[i].prot = p-&gt;vma[i].prot;</span><br><span class="line">    np-&gt;vma[i].flags = p-&gt;vma[i].flags;</span><br><span class="line">    np-&gt;vma[i].used = p-&gt;vma[i].used;</span><br><span class="line">    <span class="keyword">if</span>((np-&gt;vma[i].pf = p-&gt;vma[i].pf)!=<span class="number">0</span>)&#123;</span><br><span class="line">      filedup(np-&gt;vma[i].pf);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"><span class="comment">//and in the `uvmcopy`</span></span><br><span class="line"><span class="keyword">if</span>((pte = walk(old, i, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">      <span class="comment">//panic("uvmcopy: pte should exist");</span></span><br><span class="line"><span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">continue</span>;</span><br><span class="line">      <span class="comment">//panic("uvmcopy: page not present");</span></span><br></pre></td></tr></table></figure>
+
+<p><code>filedown</code> similar to <code>filedup</code></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// decrease ref count for file f.</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">file</span>*</span></span><br><span class="line"><span class="class"><span class="title">fileddown</span>(<span class="title">struct</span> <span class="title">file</span> *<span class="title">f</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  acquire(&amp;ftable.lock);</span><br><span class="line">  <span class="keyword">if</span>(f-&gt;ref &lt; <span class="number">1</span>)</span><br><span class="line">    panic(<span class="string">"fileddown"</span>);</span><br><span class="line">  f-&gt;ref--;</span><br><span class="line">  <span class="built_in">release</span>(&amp;ftable.lock);</span><br><span class="line">  <span class="keyword">return</span> f;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Link"><a href="#Link" class="headerlink" title="Link"></a>Link</h1><p><a href="https://pdos.csail.mit.edu/6.828/2020/labs/mmap.html">Link to mmap  Lab Page</a></p>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="https://walkerzf.github.io/2020/11/22/mmap/" title="6.S081 mmap Lab" target="_blank" rel="external">https://walkerzf.github.io/2020/11/22/mmap/</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/walkerzf" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/images/Halu.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/walkerzf" target="_blank"><span class="text-dark">Zhou Fang</span><small class="ml-1x">Learner .Want to be a thinker.</small></a></h3>
+        <div>个人简介。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    
+    <li class="next">
+      <a href="/2020/11/20/FSLab/" title="6.S081 FS Lab"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+    <li class="toggle-toc">
+      <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false" title="Catalogue" role="button">
+        <span>[&nbsp;</span><span>Catalogue</span>
+        <i class="text-collapsed icon icon-anchor"></i>
+        <i class="text-in icon icon-close"></i>
+        <span>]</span>
+      </a>
+    </li>
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+    <div class="share-component" data-sites="weibo,qq,wechat,facebook,twitter" data-mobile-sites="weibo,qq,qzone"></div>
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/walkzf" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/js/plugin.min.js"></script>
+
+
+<script src="/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+
+
+
+
+
+
+</body>
+</html>
