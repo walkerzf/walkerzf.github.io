@@ -57,6 +57,8 @@ In user code , we invoke `sigalarm`. In this system call implementation, we need
 
 When we have a timer interrupt ,we need  the `epc` be the `function pointer` , for resuming the  interrupted user code . Because usually  we return the interrupted user code, this time ,we need to jump to`handler` function ,we need to reserve the `p->tramframe->*`  and change the `p->tramframe->epc` be the `function pointer` . In `handler ` function ,we invoke `sigreturn` system call. In this implementation , we restore the saved registers  when  interrupted ,and jump to the  original `p->tramframe->epc` resume the user code .
 
+**`perimission`  is similar likely  Non-reentrant function， we set the `permission ` flag to forbid the entrant  of the handler function of signal.**
+
 ``` c
 if (which_dev == 2)
   {
